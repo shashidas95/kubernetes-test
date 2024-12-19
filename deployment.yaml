@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infinite-loop-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infinite-loop
+  template:
+    metadata:
+      labels:
+        app: infinite-loop
+    spec:
+      containers:
+        - name: infinite-loop-container
+          image: alpine
+          command: ['/bin/sh', '-c']
+          args:
+            - |
+              while true; do
+                echo "$(NAME)";
+                sleep 5;
+              done;
+          env:
+            - name: NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: name-configmap
+                  key: name
